@@ -2,6 +2,8 @@
 import headerComponent from '../g-app-components/header.vue';
 import footerComponent from '../g-app-components/footer.vue';
 import IconUpload from '../components/icons/IconUpload.vue';
+import buttonSubmit from '../g-app-components/button-submit.vue';
+import buttonCancel from '../g-app-components/button-cancel.vue';
 </script>
 
 <template>
@@ -31,23 +33,20 @@ import IconUpload from '../components/icons/IconUpload.vue';
                 <div class="bg-neutral-900 py-2 rounded-lg mt-2 px-2">
                     <div class="grid grid-cols-3 gap-2">
                         <div class="col-span-2">
-                            <label class="text-sm font-medium block mb-1">Name:</label>
-                            <input type="text" placeholder="Input team name"
-                                class="placeholder:text-sm bg-neutral-600 rounded-full w-full pl-2">
+                            <label class="input-label">Name:</label>
+                            <input type="text" placeholder="Input team name" class="input w-full">
                         </div>
                         <div>
-                            <label class="text-sm font-medium block mb-1">Player's Count:</label>
-                            <input type="number" placeholder="8"
-                                class="placeholder:text-sm bg-neutral-600 rounded-full w-full pl-2">
+                            <label class="input-label">Player's Count:</label>
+                            <input type="number" placeholder="8" class="input w-full">
                         </div>
                     </div>
                 </div>
                 <div class="bg-neutral-900 py-2 rounded-lg mt-2 px-2">
                     <div class="grid">
                         <div class="text-center">
-                            <label class="text-sm font-medium block mb-1">Player ID:</label>
-                            <input type="text" placeholder="Input player ID"
-                                class="placeholder:text-sm bg-neutral-600 rounded-full pl-2 text-center">
+                            <label class="input-label">Player ID:</label>
+                            <input type="text" placeholder="Input player ID" class="input text-center">
                         </div>
                     </div>
                 </div>
@@ -57,21 +56,30 @@ import IconUpload from '../components/icons/IconUpload.vue';
                             <label class="text-sm font-medium block mb-1">PLAYERS</label>
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="grid gap-2">
-                                    <p class="bg-neutral-600 rounded-full pl-2 text-center">Lebron</p>
-                                    <p class="bg-neutral-600 rounded-full pl-2 text-center">Lebron</p>
-                                    <p class="bg-neutral-600 rounded-full pl-2 text-center">Lebron</p>
-                                    <p class="bg-neutral-600 rounded-full pl-2 text-center">Lebron</p>
+                                    <p class="text-show">Lebron</p>
+                                    <p class="text-show">Lebron</p>
+                                    <p class="text-show">Lebron</p>
+                                    <p class="text-show">Lebron</p>
                                 </div>
                                 <div class="grid gap-2">
-                                    <p class="bg-neutral-600 rounded-full pl-2 text-center">Team Name</p>
-                                    <p class="bg-neutral-600 rounded-full pl-2 text-center">Team Name</p>
-                                    <p class="bg-neutral-600 rounded-full pl-2 text-center">Team Name</p>
-                                    <p class="bg-neutral-600 rounded-full pl-2 text-center">Team Name</p>
+                                    <p class="text-show">Team Name</p>
+                                    <p class="text-show">Team Name</p>
+                                    <p class="text-show">Team Name</p>
+                                    <p class="text-show">Team Name</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <buttonSubmit>
+                        Submit
+                    </buttonSubmit>
+                    <buttonCancel>
+                        cancel
+                    </buttonCancel>
+                </div>
+
             </form>
         </div>
         <div class="fixed bottom-0 w-full md:max-w-lg">
