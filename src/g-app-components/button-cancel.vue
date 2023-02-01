@@ -12,7 +12,7 @@ import IconCancel from '../components/icons/IconCancel.vue';
                 </slot>
             </span>
             <span class="text-neutral-200/30 absolute right-2">
-                <IconCancel />
+                <IconCancel class="h-4"/>
             </span>
         </div>
     </button>

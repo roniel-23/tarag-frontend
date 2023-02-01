@@ -4,6 +4,7 @@ import footerComponent from '../g-app-components/footer.vue';
 import IconUpload from '../components/icons/IconUpload.vue';
 import buttonSubmit from '../g-app-components/button-submit.vue';
 import buttonCancel from '../g-app-components/button-cancel.vue';
+import box from '../g-app-components/box.vue';
 </script>
 
 <template>
@@ -30,33 +31,33 @@ import buttonCancel from '../g-app-components/button-cancel.vue';
                         </div>
                     </div>
                 </div>
-                <div class="bg-neutral-900 py-2 rounded-lg mt-2 px-2">
+                <box>
                     <div class="grid grid-cols-3 gap-2">
                         <div class="col-span-2">
                             <label class="input-label">Name:</label>
-                            <input type="text" placeholder="Input team name" class="input w-full">
+                            <input type="text" placeholder="Input team name" class="input-text w-full">
                         </div>
                         <div>
                             <label class="input-label">Player's Count:</label>
-                            <input type="number" placeholder="8" class="input w-full">
+                            <input type="number" placeholder="8" class="input-text w-full">
                         </div>
                     </div>
-                </div>
-                <div class="bg-neutral-900 py-2 rounded-lg mt-2 px-2">
+                </box>
+                <box>
                     <div class="grid">
                         <div class="text-center">
                             <label class="input-label">Player ID:</label>
-                            <input type="text" placeholder="Input player ID" class="input text-center">
+                            <input type="text" placeholder="Input player ID" class="input-text text-center">
                         </div>
                     </div>
-                </div>
-                <div class="bg-neutral-900 py-2 rounded-lg mt-2 px-2">
+                </box>
+                <box>
                     <div class="grid">
                         <div class="text-center">
                             <label class="text-sm font-medium block mb-1">PLAYERS</label>
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="grid gap-2">
-                                    <p class="text-show">Lebron</p>
+                                    <p class="text-show">Lebron James</p>
                                     <p class="text-show">Lebron</p>
                                     <p class="text-show">Lebron</p>
                                     <p class="text-show">Lebron</p>
@@ -70,7 +71,7 @@ import buttonCancel from '../g-app-components/button-cancel.vue';
                             </div>
                         </div>
                     </div>
-                </div>
+                </box>
                 <div class="grid grid-cols-2 gap-4">
                     <buttonSubmit>
                         Submit

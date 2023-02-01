@@ -9,7 +9,7 @@
         <div class="flex justify-between items-center px-2">
             <div class="flex gap-2 items-center">
                 <img class="h-10"
-                src="../../public/tarag_logo.png" alt="TaraG!">
+                src="/tarag_logo.png" alt="TaraG!">
                 <IconSwitch class="text-orange-400"/>
             </div>
             <div class="flex gap-2 items-center">

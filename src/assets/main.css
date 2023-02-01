@@ -9,12 +9,32 @@
     @apply text-sm font-medium block mb-1
   }
 
-  .input {
-    @apply placeholder:text-sm bg-neutral-600 rounded-full pl-2
+  .input-text {
+    @apply placeholder:text-sm bg-neutral-600 rounded-full pl-2 py-1
   }
 
   .text-show {
-    @apply bg-neutral-600 rounded-full text-center
+    @apply bg-neutral-600 rounded-full text-center text-xs font-semibold py-1
+  }
+
+  .home-link {
+    @apply hover:text-green-500 transition
+  }
+
+  .img-profile {
+    @apply h-28 w-28 object-cover rounded-full border-2 border-neutral-200
+  }
+
+  .text-label-xs {
+    @apply text-xs font-medium text-neutral-200
+  }
+
+  .btn-menu {
+    @apply text-xs font-semibold uppercase py-2 px-6 bg-neutral-900 rounded-xl border-2 border-neutral-700 drop-shadow-[3px_3px_0_rgb(0,0,0)]
+  }
+
+  .btn-menu-active {
+    @apply text-orange-400 text-xs font-bold uppercase py-2 px-6 bg-neutral-900 rounded-xl border-2 border-neutral-700 drop-shadow-[3px_3px_0_rgb(0,0,0)]
   }
 
   
