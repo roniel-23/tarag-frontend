@@ -11,7 +11,10 @@ import { RouterLink } from 'vue-router'
           <RouterLink to="/" class="home-link">Home</RouterLink>
           <RouterLink to="/about" class="home-link">About</RouterLink>
           <RouterLink to="/teamregistration" class="home-link">Team Registration</RouterLink>
-          <RouterLink to="/teamownerprofile" class="home-link">G! TO Profile</RouterLink>
+          <RouterLink to="/teamownerprofile" class="home-link">G!TO Profile</RouterLink>
+          <RouterLink to="/dsistmatchid" class="home-link">DSIST Match ID</RouterLink>
+          <RouterLink to="/dsistform" class="home-link">DSIST Form</RouterLink>
+          <RouterLink to="/dsiststart" class="home-link">DSIST Start Game</RouterLink>
         </div>
 
       </nav>

@@ -26,6 +26,21 @@ const router = createRouter({
       path: '/teamownerprofile',
       name: 'teamownerprofile',
       component: () => import('../g-app-pages/TeamOwnerProfile.vue')
+    },
+    {
+      path: '/dsistform',
+      name: 'dsistform',
+      component: () => import('../g-app-pages/DSISTForm.vue')
+    },
+    {
+      path: '/dsistmatchid',
+      name: 'dsistmatchid',
+      component: () => import('../g-app-pages/DSISTMatchId.vue')
+    },
+    {
+      path: '/dsiststart',
+      name: 'dsiststart',
+      component: () => import('../g-app-pages/DSISTStart.vue')
     }
   ]
 })
