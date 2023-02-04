@@ -8,6 +8,8 @@ import QuarterShow from './DSISTStart-components/QuarterShow.vue';
 import TableTitle from './DSISTStart-components/TableTitle.vue';
 import TablePlayer from './DSISTStart-components/TablePlayer.vue';
 import ScoreShow from './DSISTStart-components/ScoreShow.vue';
+import TeamSubstitution from './DSISTStart-components/TeamSubstitution.vue';
+import DSISTNavigation from './DSISTStart-components/DSISTNavigation.vue';
 import { ref, reactive } from 'vue';
 
 const showPoints = ($event) => {
@@ -20,9 +22,16 @@ const showPoints = ($event) => {
         isPts.value = false
     }
 }
+
+const getNavAction = ($event) => {
+    // console.log($event)
+    showSpecific.value = $event.name
+
+}
 const showScore = ref(false)
 const player = ref(null)
 const isPts = ref(false)
+const showSpecific = ref('')
 
 const playerScores = reactive([
     {
@@ -38,6 +47,16 @@ const playerScores = reactive([
     {
         name: 'Curry',
         id: 2,
+        pts: 0,
+        reb: 0,
+        ast: 0,
+        blk: 0,
+        stl: 0,
+        fls: 0
+    },
+    {
+        name: 'James',
+        id: 3,
         pts: 0,
         reb: 0,
         ast: 0,
@@ -96,29 +115,39 @@ const playerScores = reactive([
                     </div>
                 </div>
             </box>
-            <!-- team 1 -->
-            <box>
-                <div class="text-center font-semibold border-b pb-0.5 mb-0.5">
-                    TNT
-                </div>
-                <div class="grid gap-1">
-                    <TableTitle />
-                    <TablePlayer v-for="playerScore in playerScores" :key="playerScore.id" :player="playerScore"
-                        @score-clicked="showPoints" />
-                </div>
-            </box>
-            <!-- team 2 -->
-            <box>
-                <div class="text-center font-semibold border-b pb-0.5 mb-0.5">
-                    GSM
-                </div>
-                <div class="grid gap-1">
-                    <TableTitle />
-                    <TablePlayer v-for="playerScore in playerScores" :key="playerScore.id" :player="playerScore"
-                        @score-clicked="showPoints" />
-                </div>
-            </box>
+            <div v-if="showSpecific == 'substitution'">
+                <TeamSubstitution :players="playerScores"/>
+            </div>
+            <div v-else>
+                <!-- team 1 -->
+                <box>
+                    <div class="text-center font-semibold border-b pb-0.5 mb-0.5">
+                        TNT
+                    </div>
+                    <div class="grid gap-1">
+                        <TableTitle />
+                        <TablePlayer v-for="playerScore in playerScores" :key="playerScore.id" :player="playerScore"
+                            @score-clicked="showPoints" />
+                    </div>
+                </box>
+                <!-- team 2 -->
+                <box>
+                    <div class="text-center font-semibold border-b pb-0.5 mb-0.5">
+                        GSM
+                    </div>
+                    <div class="grid gap-1">
+                        <TableTitle />
+                        <TablePlayer v-for="playerScore in playerScores" :key="playerScore.id" :player="playerScore"
+                            @score-clicked="showPoints" />
+                    </div>
+                </box>
+            </div>
+
         </div>
+        <div class="fixed bottom-0 w-full md:max-w-lg">
+            <DSISTNavigation @nav-clicked="getNavAction"/>
+        </div>
+
     </div>
     <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" @close="showScore = false" />
 
