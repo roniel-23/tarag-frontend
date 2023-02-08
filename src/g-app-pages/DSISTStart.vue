@@ -10,7 +10,14 @@ import TablePlayer from './DSISTStart-components/TablePlayer.vue';
 import ScoreShow from './DSISTStart-components/ScoreShow.vue';
 import TeamSubstitution from './DSISTStart-components/TeamSubstitution.vue';
 import DSISTNavigation from './DSISTStart-components/DSISTNavigation.vue';
-import { ref, reactive } from 'vue';
+import { usePlayerStore } from '../stores/playerStore';
+import { storeToRefs } from "pinia";
+import { ref, reactive, onMounted } from 'vue';
+
+const { players, loading, error } = storeToRefs(usePlayerStore());
+
+const playerStore = usePlayerStore();
+playerStore.fill();
 
 const showPoints = ($event) => {
     // console.log($event)
@@ -18,53 +25,36 @@ const showPoints = ($event) => {
     player.value = $event.player
     if ($event.category == 'pts') {
         isPts.value = true
+        lastCategoryClicked.value = 'pts'
     } else {
+        lastCategoryClicked.value = ''
         isPts.value = false
     }
 }
+
+const scoreTeam_one = ref(0)
+const scoreTeam_two = ref(0)
 
 const getNavAction = ($event) => {
     // console.log($event)
     showSpecific.value = $event.name
 
 }
+
+const scorePoints = ($event) => {
+    // console.log($event)
+    showScore.value = false
+    if ($event.team == playerStore.players.team_one.name && lastCategoryClicked.value == 'pts') {
+        scoreTeam_one.value = scoreTeam_one.value + $event.score
+    } else if ($event.team == playerStore.players.team_two.name && lastCategoryClicked.value == 'pts') {
+        scoreTeam_two.value = scoreTeam_two.value + $event.score
+    }
+}
 const showScore = ref(false)
 const player = ref(null)
 const isPts = ref(false)
 const showSpecific = ref('')
-
-const playerScores = reactive([
-    {
-        name: 'Jordan',
-        id: 1,
-        pts: 0,
-        reb: 0,
-        ast: 0,
-        blk: 0,
-        stl: 0,
-        fls: 0
-    },
-    {
-        name: 'Curry',
-        id: 2,
-        pts: 0,
-        reb: 0,
-        ast: 0,
-        blk: 0,
-        stl: 0,
-        fls: 0
-    },
-    {
-        name: 'James',
-        id: 3,
-        pts: 0,
-        reb: 0,
-        ast: 0,
-        blk: 0,
-        stl: 0,
-        fls: 0
-    },
-])
+const lastCategoryClicked = ref(null)
 
 </script>
 
@@ -73,11 +63,11 @@ const playerScores = reactive([
         <headerComponent class="top-0 w-full" />
         <div class="w-full text-neutral-200 px-2">
             <TournamentInfo />
-            <box>
+            <box v-if="!loading">
                 <div class="grid grid-cols-12 gap-2">
                     <div class="col-span-3 grid text-center">
-                        <TeamShow :team-name="'TNT'">
-                            10
+                        <TeamShow :team-name="players.team_one.name">
+                            <h3>{{ scoreTeam_one }}</h3>
                         </TeamShow>
                     </div>
                     <div class="col-span-6 text-center">
@@ -89,11 +79,9 @@ const playerScores = reactive([
                         </div>
                     </div>
                     <div class="col-span-3 grid text-center">
-                        <div class="col-span-3 grid text-center">
-                            <TeamShow :team-name="'GSM'">
-                                7
-                            </TeamShow>
-                        </div>
+                        <TeamShow :team-name="players.team_two.name">
+                            <h3>{{ scoreTeam_two }}</h3>
+                        </TeamShow>
                     </div>
                 </div>
                 <div class="grid grid-cols-5 gap-2 mt-2">
@@ -116,9 +104,9 @@ const playerScores = reactive([
                 </div>
             </box>
             <div v-if="showSpecific == 'substitution'">
-                <TeamSubstitution :players="playerScores"/>
+                <TeamSubstitution />
             </div>
-            <div v-else>
+            <div v-else v-if="players.length != 0">
                 <!-- team 1 -->
                 <box>
                     <div class="text-center font-semibold border-b pb-0.5 mb-0.5">
@@ -126,7 +114,7 @@ const playerScores = reactive([
                     </div>
                     <div class="grid gap-1">
                         <TableTitle />
-                        <TablePlayer v-for="playerScore in playerScores" :key="playerScore.id" :player="playerScore"
+                        <TablePlayer v-for="player in players.team_one.players" :key="player.id" :player="player"
                             @score-clicked="showPoints" />
                     </div>
                 </box>
@@ -137,7 +125,7 @@ const playerScores = reactive([
                     </div>
                     <div class="grid gap-1">
                         <TableTitle />
-                        <TablePlayer v-for="playerScore in playerScores" :key="playerScore.id" :player="playerScore"
+                        <TablePlayer v-for="player in players.team_two.players" :key="player.id" :player="player"
                             @score-clicked="showPoints" />
                     </div>
                 </box>
@@ -145,11 +133,11 @@ const playerScores = reactive([
 
         </div>
         <div class="fixed bottom-0 w-full md:max-w-lg">
-            <DSISTNavigation @nav-clicked="getNavAction"/>
+            <DSISTNavigation @nav-clicked="getNavAction" />
         </div>
 
     </div>
-    <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" @close="showScore = false" />
+    <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" @score="scorePoints" @close="showScore = false" />
 
 
 </template>

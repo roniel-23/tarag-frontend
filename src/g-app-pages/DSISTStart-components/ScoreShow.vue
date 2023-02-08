@@ -1,10 +1,14 @@
 <script setup>
 import buttonCancel from '../../g-app-components/button-cancel.vue';
-const emits = defineEmits(['close'])
-defineProps({
+const emit = defineEmits(['close', 'score'])
+const props = defineProps({
     player: Object ?? null,
     isPts: Boolean
 })
+
+const emitValue = (value) => {
+    emit('score', { score: value, id: props.player.id, team: props.player.team })
+}
 </script>
 
 <template>
@@ -19,30 +23,36 @@ defineProps({
                 </h3>
                 <div v-if="isPts" class="h-28 grid grid-cols-3 gap-2 mx-2 text-5xl my-4">
                     <div class="text-center grid items-center border border-neutral-700 h-full rounded-xl p-2">
-                        <button class="h-full rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
+                        <button @click="emitValue(1)"
+                            class="h-full rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
                             1
                         </button>
                     </div>
                     <div class="text-center grid items-center border border-neutral-700 h-full rounded-xl p-2">
-                        <button class="h-full rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
+                        <button @click="emitValue(2)"
+                            class="h-full rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
                             2
                         </button>
                     </div>
                     <div class="text-center grid items-center border border-neutral-700 h-full rounded-xl p-2">
-                        <button class="h-full rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
+                        <button @click="emitValue(3)"
+                            class="h-full rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
                             3
                         </button>
                     </div>
                 </div>
                 <div v-else class="h-28 w-40 grid mx-auto text-5xl my-4">
                     <div class="text-center grid items-center border border-neutral-700 h-full rounded-xl p-2">
-                        <button class="h-full rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
+                        <button @click="emitValue(1)"
+                            class="h-full rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
                             1
                         </button>
                     </div>
                 </div>
                 <div class="px-4 pt-2">
-                    <buttonCancel @click="$emit('close')" />
+                    <buttonCancel @click="$emit('close')">
+                        back
+                    </buttonCancel>
                 </div>
 
             </div>
