@@ -1,11 +1,5 @@
 <script setup>
 import buttonCancel from '../../g-app-components/button-cancel.vue';
-import { usePlayerStore } from '../../stores/playerStore';
-import { storeToRefs } from "pinia";
-const { players } = storeToRefs(usePlayerStore());
-
-const playerStore = usePlayerStore();
-playerStore.fill();
 
 const emit = defineEmits(['close', 'score'])
 const props = defineProps({
