@@ -4,6 +4,10 @@
     })
     defineEmits(['scoreClicked'])
 
+//     const emitValue = (value) => {
+//     emit('scoreClicked', {player: player, category: 'reb'})
+// }
+
 </script>
 
 <template>

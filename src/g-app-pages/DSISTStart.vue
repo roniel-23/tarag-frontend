@@ -12,7 +12,7 @@ import TeamSubstitution from './DSISTStart-components/TeamSubstitution.vue';
 import DSISTNavigation from './DSISTStart-components/DSISTNavigation.vue';
 import { usePlayerStore } from '../stores/playerStore';
 import { storeToRefs } from "pinia";
-import { ref, reactive, onMounted } from 'vue';
+import { ref } from 'vue';
 
 const { players, loading, error } = storeToRefs(usePlayerStore());
 
@@ -23,39 +23,58 @@ const showPoints = ($event) => {
     // console.log($event)
     showScore.value = true
     player.value = $event.player
+    lastCategoryClicked.value = $event.category
     if ($event.category == 'pts') {
-        isPts.value = true
-        lastCategoryClicked.value = 'pts'
+        isPts.value = true  
     } else {
-        lastCategoryClicked.value = ''
         isPts.value = false
     }
-}
-
-const scoreTeam_one = ref(0)
-const scoreTeam_two = ref(0)
-
-const getNavAction = ($event) => {
-    // console.log($event)
-    showSpecific.value = $event.name
-
 }
 
 const scorePoints = ($event) => {
     // console.log($event)
     showScore.value = false
+    addScoreToPlayer($event.score, $event.id, $event.team)
     if ($event.team == playerStore.players.team_one.name && lastCategoryClicked.value == 'pts') {
         scoreTeam_one.value = scoreTeam_one.value + $event.score
     } else if ($event.team == playerStore.players.team_two.name && lastCategoryClicked.value == 'pts') {
         scoreTeam_two.value = scoreTeam_two.value + $event.score
     }
 }
+
+const addScoreToPlayer = (score, id, team) => {
+    if (team == playerStore.players.team_one.name) {
+        for (var i = 0; i < playerStore.players.team_one.players.length; i++) {
+            if (playerStore.players.team_one.players[i].id == id) {
+                var a = 'playerStore.players.team_one.players[i].' + lastCategoryClicked.value.toString()
+                eval( a + '=' + a +'+'+ score.toString())
+                // console.log( a + '=' + a +'+'+ score.toString())
+            }
+        }
+    } else {
+        for (var i = 0; i < playerStore.players.team_two.players.length; i++) {
+            if (playerStore.players.team_two.players[i].id == id) {
+                var a = 'playerStore.players.team_two.players[i].' + lastCategoryClicked.value.toString()
+                eval( a + '=' + a +'+'+ score.toString())
+            }
+        }
+    }
+
+}
+
+const scoreTeam_one = ref(0)
+const scoreTeam_two = ref(0)
 const showScore = ref(false)
 const player = ref(null)
 const isPts = ref(false)
 const showSpecific = ref('')
 const lastCategoryClicked = ref(null)
 
+const getNavAction = ($event) => {
+    // console.log($event)
+    showSpecific.value = $event.name
+
+}
 </script>
 
 <template>
@@ -137,7 +156,7 @@ const lastCategoryClicked = ref(null)
         </div>
 
     </div>
-    <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" @score="scorePoints" @close="showScore = false" />
+    <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" :category="lastCategoryClicked" @score="scorePoints" @close="showScore = false" />
 
 
 </template>

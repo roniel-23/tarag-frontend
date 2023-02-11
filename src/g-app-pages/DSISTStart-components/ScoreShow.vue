@@ -1,8 +1,16 @@
 <script setup>
 import buttonCancel from '../../g-app-components/button-cancel.vue';
+import { usePlayerStore } from '../../stores/playerStore';
+import { storeToRefs } from "pinia";
+const { players } = storeToRefs(usePlayerStore());
+
+const playerStore = usePlayerStore();
+playerStore.fill();
+
 const emit = defineEmits(['close', 'score'])
 const props = defineProps({
     player: Object ?? null,
+    category: String,
     isPts: Boolean
 })
 
@@ -15,9 +23,9 @@ const emitValue = (value) => {
     <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-neutral-600 bg-opacity-75 transition-opacity"></div>
         <div class="fixed inset-1 z-10 grid items-center">
-            <div class="md:max-w-lg md:mx-auto bg-neutral-900 rounded-lg text-center text-neutral-200 p-4">
+            <div v-if="players.length != 0" class="md:max-w-lg md:mx-auto bg-neutral-900 rounded-lg text-center text-neutral-200 p-4">
                 <h3 class="font-bold uppercase mb-2 border-b pb-2">
-                    Select score
+                    Select {{ category }}
                     <span class="font-normal lowercase mx-1">for</span>
                     {{ player.name }}
                 </h3>
