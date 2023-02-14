@@ -1,34 +1,74 @@
 <script setup>
-    import IconTimeout from '../../components/icons/IconTimeout.vue';
-    import IconSubstitution from '../../components/icons/IconSubstitution.vue';
-    import IconPlay from '../../components/icons/IconPlay.vue';
-    import IconUndo from '../../components/icons/IconUndo.vue';
-    import IconRedo from '../../components/icons/IconRedo.vue';
+import { useTimerStore } from '../../stores/timerStore';
+import { storeToRefs } from "pinia";
+import IconTimeout from '../../components/icons/IconTimeout.vue';
+import IconSubstitution from '../../components/icons/IconSubstitution.vue';
+import IconPlay from '../../components/icons/IconPlay.vue';
+import IconPause from '../../components/icons/IconPause.vue';
+import IconUndo from '../../components/icons/IconUndo.vue';
+import IconRedo from '../../components/icons/IconRedo.vue';
+import { ref } from 'vue';
 
-    defineEmits(['navClicked'])
+const emit = defineEmits(['navClicked'])
+const startSignal = ref(false)
+const isHome = ref(true)
+
+const { isPause, start } = storeToRefs(useTimerStore());
+
+const toggleTimer = () => {
+    if (isHome.value) {
+        if (startSignal.value == false) {
+            start.value = true
+            startSignal.value = true
+        } else {
+            isPause.value = !isPause.value
+        }
+    }
+    emitValue('play')
+}
+
+const emitValue = (name) => {
+    if (name == 'play' || name == 'undo' || name == 'redo') {
+        isHome.value = true
+    } else {
+        isHome.value = false
+        isPause.value = false
+    }
+    emit('navClicked', { name: name })
+}
 </script>
 
 <template>
     <div class="h-14 bg-neutral-900 text-neutral-200 grid items-center">
         <div class="grid grid-cols-5 items-center px-2">
-            <button @click="$emit('navClicked', {name: 'timeout'})" class="grid justify-items-center">
-                <IconTimeout class="h-6 hover:text-orange-400 hover:scale-110 transition"/>
+            <button @click="emitValue('timeout')" class="grid justify-items-center">
+                <IconTimeout class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                 <small class="uppercase">Timeout</small>
             </button>
-            <button @click="$emit('navClicked', {name: 'substitution'})" class="grid justify-items-center">
-                <IconSubstitution class="h-6 hover:text-orange-400 hover:scale-110 transition"/>
+            <button @click="emitValue('substitution')" class="grid justify-items-center">
+                <IconSubstitution class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                 <small class="uppercase">Subs</small>
             </button>
-            <button @click="$emit('navClicked', {name: 'play'})" class="grid justify-items-center">
-                <IconPlay class="h-6 hover:text-orange-400 hover:scale-110 transition"/>
-                <small class="uppercase">Play</small>
+            <button @click="toggleTimer">
+                <span v-if="!start" class="grid justify-items-center">
+                    <IconPlay class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                    <small class="uppercase">play</small>
+                </span>
+                <span v-else-if="isPause" class="grid justify-items-center">
+                    <IconPause  class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                    <small class="uppercase">pause</small>
+                </span>
+                <span v-else-if="!isPause" class="grid justify-items-center">
+                    <IconPlay  class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                    <small class="uppercase">play</small>
+                </span>
             </button>
-            <button @click="$emit('navClicked', {name: 'undo'})" class="grid justify-items-center">
-                <IconUndo class="h-6 hover:text-orange-400 hover:scale-110 transition"/>
+            <button @click="emitValue('undo')" class="grid justify-items-center">
+                <IconUndo class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                 <small class="uppercase">Undo</small>
             </button>
-            <button @click="$emit('navClicked', {name: 'redo'})" class="grid justify-items-center">
-                <IconRedo class="h-6 hover:text-orange-400 hover:scale-110 transition"/>
+            <button @click="emitValue('redo')" class="grid justify-items-center">
+                <IconRedo class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                 <small class="uppercase">Redo</small>
             </button>
         </div>

@@ -17,7 +17,7 @@ const emitValue = (value) => {
     <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-neutral-600 bg-opacity-75 transition-opacity"></div>
         <div class="fixed inset-1 z-10 grid items-center">
-            <div v-if="players.length != 0" class="md:max-w-lg md:mx-auto bg-neutral-900 rounded-lg text-center text-neutral-200 p-4">
+            <div v-if="player.length != 0" class="md:max-w-lg md:mx-auto bg-neutral-900 rounded-lg text-center text-neutral-200 p-4">
                 <h3 class="font-bold uppercase mb-2 border-b pb-2">
                     Select {{ category }}
                     <span class="font-normal lowercase mx-1">for</span>

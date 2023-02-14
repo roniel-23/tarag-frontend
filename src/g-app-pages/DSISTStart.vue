@@ -10,6 +10,7 @@ import TablePlayer from './DSISTStart-components/TablePlayer.vue';
 import ScoreShow from './DSISTStart-components/ScoreShow.vue';
 import TeamSubstitution from './DSISTStart-components/TeamSubstitution.vue';
 import DSISTNavigation from './DSISTStart-components/DSISTNavigation.vue';
+import Timer from './DSISTStart-components/Timer.vue';
 import { usePlayerStore } from '../stores/playerStore';
 import { storeToRefs } from "pinia";
 import { ref } from 'vue';
@@ -69,6 +70,7 @@ const player = ref(null)
 const isPts = ref(false)
 const showSpecific = ref('')
 const lastCategoryClicked = ref(null)
+const quarterTime = ref(0.5) // mins
 
 const getNavAction = ($event) => {
     // console.log($event)
@@ -90,12 +92,7 @@ const getNavAction = ($event) => {
                         </TeamShow>
                     </div>
                     <div class="col-span-6 text-center">
-                        <div class="border-b pb-1">
-                            <h3 class="uppercase font-medium">warm-up timer</h3>
-                        </div>
-                        <div class="w-full p-2">
-                            <h3 class="text-3xl">12:00</h3>
-                        </div>
+                        <Timer :time="quarterTime" />
                     </div>
                     <div class="col-span-3 grid text-center">
                         <TeamShow :team-name="players.team_two.name">
@@ -124,6 +121,9 @@ const getNavAction = ($event) => {
             </box>
             <div v-if="showSpecific == 'substitution'">
                 <TeamSubstitution />
+            </div>
+            <div v-if="showSpecific == 'timeout'">
+                timeout
             </div>
             <div v-else v-if="players.length != 0">
                 <!-- team 1 -->
