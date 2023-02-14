@@ -122,7 +122,7 @@ const getNavAction = ($event) => {
             <div v-if="showSpecific == 'substitution'">
                 <TeamSubstitution />
             </div>
-            <div v-if="showSpecific == 'timeout'">
+            <div v-else-if="showSpecific == 'timeout'">
                 timeout
             </div>
             <div v-else v-if="players.length != 0">

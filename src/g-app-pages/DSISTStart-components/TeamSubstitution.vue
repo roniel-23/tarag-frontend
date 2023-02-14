@@ -1,37 +1,49 @@
 <script setup>
 import box from '../../g-app-components/box.vue';
-import IconCancel from '../../components/icons/IconCancel.vue';
-import IconPlus from '../../components/icons/IconPlus.vue';
-import { ref, computed } from 'vue';
-defineProps({
-    players: Object,
-})
+import SubstitutionPlayer from './SubstitutionPlayer.vue';
+import { ref } from 'vue';
+import { usePlayerStore } from '../../stores/playerStore';
+import { storeToRefs } from "pinia";
+
+const { players, loading } = storeToRefs(usePlayerStore());
+
+const playerStore = usePlayerStore();
+playerStore.fill();
 
 const isActive = ref(true)
 
-const selectedTeam = (item) => {
-    if(item == 'TNT'){
-        isActive.value = true
-    } else { isActive.value = false }
+const setPlayerStatus = ($event) => {
+    if ($event.team == playerStore.players.team_one.name) {
+        for (var i = 0; i < playerStore.players.team_one.players.length; i++) {
+            if (playerStore.players.team_one.players[i].id == $event.id) {
+                playerStore.players.team_one.players[i].status = $event.status
+            }
+        }
+    } else {
+        for (var i = 0; i < playerStore.players.team_two.players.length; i++) {
+            if (playerStore.players.team_two.players[i].id == $event.id) {
+                playerStore.players.team_two.players[i].status = $event.status
+            }
+        }
+    }
+
 }
-
-
 </script>
 
 <template>
-    <div>
+    <div v-if="!loading">
         <box>
             <div class="mb-1 border-neutral-900">
                 <div class="grid grid-cols-2 text-center font-semibold">
-                    <button @click="selectedTeam('TNT')" 
-                    :class="isActive ? 'border border-b-0' : 'bg-neutral-900 text-neutral-600 border-b'" 
-                    class="w-full rounded-t-lg py-0.5 border-neutral-600">
-                        TNT
+                    <button @click="isActive = true"
+                        :class="isActive ? 'border border-b-0' : 'bg-neutral-900 text-neutral-600 border-b'"
+                        class="w-full rounded-t-lg py-0.5 border-neutral-600">
+                        {{ players.team_one.name }}
                     </button>
-                    <button @click="selectedTeam('GSM')" 
-                    :class="!isActive ? 'border border-b-0' : 'bg-neutral-900 text-neutral-600 border-b'" 
-                    class="w-full rounded-t-lg py-0.5 border-neutral-600">
-                        GSM
+                    <button @click="isActive = false"
+                        :class="!isActive ? 'border border-b-0' : 'bg-neutral-900 text-neutral-600 border-b'"
+                        class="w-full rounded-t-lg py-0.5 border-neutral-600">
+                        {{ players.team_two.name }}
                     </button>
                 </div>
 
@@ -44,18 +56,29 @@ const selectedTeam = (item) => {
                     Bench
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2 text-sm">
+            <div v-if="isActive" class="grid grid-cols-2 gap-2 text-sm">
                 <div class="font-medium">
-                    <button v-for="player in players" :key="player.id" class="btn-player-inplay">
-                        <h3 class="uppercase">PG | 23 {{ player.name }}</h3>
-                        <IconCancel class="h-3" />
-                    </button>
+                    <div v-for="player in players.team_one.players" :key="player.id">
+                        <SubstitutionPlayer @status="setPlayerStatus" :player="player" :status="1" />
+                    </div>
                 </div>
                 <div class="font-medium">
-                    <button v-for="player in players" :key="player.id" class="btn-player-bench">
-                        <h3 class="uppercase">PG | 23 {{ player.name }}</h3>
-                        <IconPlus class="h-3" />
-                    </button>
+                    <div v-for="player in players.team_one.players" :key="player.id">
+                        <SubstitutionPlayer @status="setPlayerStatus" :player="player" :status="0" />
+                    </div>
+                </div>
+            </div>
+
+            <div v-else class="grid grid-cols-2 gap-2 text-sm">
+                <div class="font-medium">
+                    <div v-for="player in players.team_two.players" :key="player.id">
+                        <SubstitutionPlayer @status="setPlayerStatus" :player="player" :status="1" />
+                    </div>
+                </div>
+                <div class="font-medium">
+                    <div v-for="player in players.team_two.players" :key="player.id">
+                        <SubstitutionPlayer @status="setPlayerStatus" :player="player" :status="0" />
+                    </div>
                 </div>
             </div>
         </box>

@@ -11,7 +11,7 @@
 </script>
 
 <template>
-    <div class="grid grid-cols-12 gap-1 px-1 border-b border-neutral-700 pb-1">
+    <div v-if="player.status == 1" class="grid grid-cols-12 gap-1 px-1 border-b border-neutral-700 pb-1">
         <div class="grid col-span-4 w-full text-label-xs uppercase">
             PG | 23 {{ player.name }}
         </div>

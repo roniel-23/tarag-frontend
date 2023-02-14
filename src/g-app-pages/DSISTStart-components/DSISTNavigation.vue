@@ -12,6 +12,7 @@ import { ref } from 'vue';
 const emit = defineEmits(['navClicked'])
 const startSignal = ref(false)
 const isHome = ref(true)
+const page = ref('play')
 
 const { isPause, start } = storeToRefs(useTimerStore());
 
@@ -28,11 +29,14 @@ const toggleTimer = () => {
 }
 
 const emitValue = (name) => {
+    page.value = name
     if (name == 'play' || name == 'undo' || name == 'redo') {
         isHome.value = true
     } else {
         isHome.value = false
-        isPause.value = false
+        if (startSignal.value){
+            isPause.value = false
+        }
     }
     emit('navClicked', { name: name })
 }
@@ -42,33 +46,40 @@ const emitValue = (name) => {
     <div class="h-14 bg-neutral-900 text-neutral-200 grid items-center">
         <div class="grid grid-cols-5 items-center px-2">
             <button @click="emitValue('timeout')" class="grid justify-items-center">
-                <IconTimeout class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                <IconTimeout :class="page == 'timeout' ? 'text-orange-400' : ''"
+                    class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                 <small class="uppercase">Timeout</small>
             </button>
             <button @click="emitValue('substitution')" class="grid justify-items-center">
-                <IconSubstitution class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                <IconSubstitution :class="page == 'substitution' ? 'text-orange-400' : ''"
+                    class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                 <small class="uppercase">Subs</small>
             </button>
             <button @click="toggleTimer">
                 <span v-if="!start" class="grid justify-items-center">
-                    <IconPlay class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                    <IconPlay :class="page == 'play' ? 'text-orange-400' : ''"
+                        class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                     <small class="uppercase">play</small>
                 </span>
                 <span v-else-if="isPause" class="grid justify-items-center">
-                    <IconPause  class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                    <IconPause :class="page == 'play' ? 'text-orange-400' : ''"
+                        class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                     <small class="uppercase">pause</small>
                 </span>
                 <span v-else-if="!isPause" class="grid justify-items-center">
-                    <IconPlay  class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                    <IconPlay :class="page == 'play' ? 'text-orange-400' : ''"
+                        class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                     <small class="uppercase">play</small>
                 </span>
             </button>
             <button @click="emitValue('undo')" class="grid justify-items-center">
-                <IconUndo class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                <IconUndo :class="page == 'undo' ? 'text-orange-400' : ''"
+                    class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                 <small class="uppercase">Undo</small>
             </button>
             <button @click="emitValue('redo')" class="grid justify-items-center">
-                <IconRedo class="h-6 hover:text-orange-400 hover:scale-110 transition" />
+                <IconRedo :class="page == 'redo' ? 'text-orange-400' : ''"
+                    class="h-6 hover:text-orange-400 hover:scale-110 transition" />
                 <small class="uppercase">Redo</small>
             </button>
         </div>
