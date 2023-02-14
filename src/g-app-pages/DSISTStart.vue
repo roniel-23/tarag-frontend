@@ -20,13 +20,28 @@ const { players, loading, error } = storeToRefs(usePlayerStore());
 const playerStore = usePlayerStore();
 playerStore.fill();
 
+const scoreTeam_one = ref(0)
+const scoreTeam_two = ref(0)
+const showScore = ref(false)
+const player = ref(null)
+const isPts = ref(false)
+const showSpecific = ref('')
+const lastCategoryClicked = ref(null)
+const isUndo = ref(true)
+const isRedo = ref(true)
+const lastTeam = ref(null)
+const lastId = ref(null)
+const lastScore = ref(null)
+const lastNav = ref(null)
+const quarterTime = ref(0.5) // mins
+
 const showPoints = ($event) => {
     // console.log($event)
     showScore.value = true
     player.value = $event.player
     lastCategoryClicked.value = $event.category
     if ($event.category == 'pts') {
-        isPts.value = true  
+        isPts.value = true
     } else {
         isPts.value = false
     }
@@ -35,7 +50,11 @@ const showPoints = ($event) => {
 const scorePoints = ($event) => {
     // console.log($event)
     showScore.value = false
-    addScoreToPlayer($event.score, $event.id, $event.team)
+    isUndo.value = false
+    lastTeam.value = $event.team
+    lastId.value = $event.id
+    lastScore.value = $event.score
+    addScoreToPlayer($event.score, $event.id, $event.team, '+')
     if ($event.team == playerStore.players.team_one.name && lastCategoryClicked.value == 'pts') {
         scoreTeam_one.value = scoreTeam_one.value + $event.score
     } else if ($event.team == playerStore.players.team_two.name && lastCategoryClicked.value == 'pts') {
@@ -43,12 +62,12 @@ const scorePoints = ($event) => {
     }
 }
 
-const addScoreToPlayer = (score, id, team) => {
+const addScoreToPlayer = (score, id, team, operation) => {
     if (team == playerStore.players.team_one.name) {
         for (var i = 0; i < playerStore.players.team_one.players.length; i++) {
             if (playerStore.players.team_one.players[i].id == id) {
                 var a = 'playerStore.players.team_one.players[i].' + lastCategoryClicked.value.toString()
-                eval( a + '=' + a +'+'+ score.toString())
+                eval(a + '=' + a + operation + score.toString())
                 // console.log( a + '=' + a +'+'+ score.toString())
             }
         }
@@ -56,26 +75,54 @@ const addScoreToPlayer = (score, id, team) => {
         for (var i = 0; i < playerStore.players.team_two.players.length; i++) {
             if (playerStore.players.team_two.players[i].id == id) {
                 var a = 'playerStore.players.team_two.players[i].' + lastCategoryClicked.value.toString()
-                eval( a + '=' + a +'+'+ score.toString())
+                eval(a + '=' + a + operation + score.toString())
             }
         }
     }
 
 }
 
-const scoreTeam_one = ref(0)
-const scoreTeam_two = ref(0)
-const showScore = ref(false)
-const player = ref(null)
-const isPts = ref(false)
-const showSpecific = ref('')
-const lastCategoryClicked = ref(null)
-const quarterTime = ref(0.5) // mins
+const undo = () => {
+    if (isUndo.value == false) {
+        isRedo.value = false
+        isUndo.value = true
+        addScoreToPlayer(lastScore.value, lastId.value, lastTeam.value, '-')
+        if (lastCategoryClicked.value == 'pts') {
+            if (lastTeam.value == playerStore.players.team_one.name) {
+                scoreTeam_one.value = scoreTeam_one.value - lastScore.value
+            } else {
+                scoreTeam_two.value = scoreTeam_two.value - lastScore.value
+            }
+        }
+    }
+}
+
+const redo = () => {
+    if (isRedo.value == false) {
+        isRedo.value = true
+        isUndo.value = false
+        addScoreToPlayer(lastScore.value, lastId.value, lastTeam.value, '+')
+        if (lastCategoryClicked.value == 'pts') {
+            if (lastTeam.value == playerStore.players.team_one.name) {
+                scoreTeam_one.value = scoreTeam_one.value + lastScore.value
+            } else {
+                scoreTeam_two.value = scoreTeam_two.value + lastScore.value
+            }
+        }
+    }
+}
 
 const getNavAction = ($event) => {
-    // console.log($event)
+    // console.log($event.name)
     showSpecific.value = $event.name
-
+    if (lastNav.value == 'substitution' || lastNav.value == 'timeout') {} else {
+        if ($event.name == 'undo') {
+            undo()
+        } else if ($event.name == 'redo') {
+            redo()
+        }
+    } 
+    lastNav.value = $event.name
 }
 </script>
 
@@ -156,7 +203,8 @@ const getNavAction = ($event) => {
         </div>
 
     </div>
-    <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" :category="lastCategoryClicked" @score="scorePoints" @close="showScore = false" />
+    <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" :category="lastCategoryClicked" @score="scorePoints"
+        @close="showScore = false" />
 
 
 </template>

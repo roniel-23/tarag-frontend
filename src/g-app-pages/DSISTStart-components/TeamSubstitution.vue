@@ -8,7 +8,6 @@ import { storeToRefs } from "pinia";
 const { players, loading } = storeToRefs(usePlayerStore());
 
 const playerStore = usePlayerStore();
-playerStore.fill();
 
 const isActive = ref(true)
 
