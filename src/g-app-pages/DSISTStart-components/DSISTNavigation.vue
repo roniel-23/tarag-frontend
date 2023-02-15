@@ -17,6 +17,7 @@ const page = ref('play')
 const { isPause, start } = storeToRefs(useTimerStore());
 
 const toggleTimer = () => {
+    // console.log('home:' + isHome.value)
     if (isHome.value) {
         if (startSignal.value == false) {
             start.value = true

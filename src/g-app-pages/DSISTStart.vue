@@ -11,13 +11,16 @@ import ScoreShow from './DSISTStart-components/ScoreShow.vue';
 import TeamSubstitution from './DSISTStart-components/TeamSubstitution.vue';
 import DSISTNavigation from './DSISTStart-components/DSISTNavigation.vue';
 import Timer from './DSISTStart-components/Timer.vue';
+import buttonSubmit from '../g-app-components/button-submit.vue';
 import { usePlayerStore } from '../stores/playerStore';
 import { storeToRefs } from "pinia";
 import { ref } from 'vue';
 
 const { players, loading, error } = storeToRefs(usePlayerStore());
-
 const playerStore = usePlayerStore();
+let quarter_1 = {}
+let quarter_2 = {}
+
 playerStore.fill();
 
 const scoreTeam_one = ref(0)
@@ -26,6 +29,7 @@ const showScore = ref(false)
 const player = ref(null)
 const isPts = ref(false)
 const showSpecific = ref('')
+const showSaveButton = ref(false)
 const lastCategoryClicked = ref(null)
 const isUndo = ref(true)
 const isRedo = ref(true)
@@ -33,17 +37,44 @@ const lastTeam = ref(null)
 const lastId = ref(null)
 const lastScore = ref(null)
 const lastNav = ref(null)
-const quarterTime = ref(0.5) // mins
+const quarterTime = ref(0.1) // mins
+const warmUpTime = ref(0.1)
+const currentQuarter = ref(0) // 0 for warm up
+const quarter = ref(4)
+const timerKey = ref(0)
+
+const reRenderTimer = () => {
+    timerKey.value += 1;
+}
+
+const saveData = () => {
+    showSaveButton.value = false
+    if (quarter.value == currentQuarter.value) {
+        console.log('end game')
+    } else {
+        quarterTime.value = 0.1
+        reRenderTimer()
+    }
+    currentQuarter.value++
+}
+
+const displaySaveButton = () => {
+    if (quarter.value >= currentQuarter.value) {
+        showSaveButton.value = true
+    }
+}
 
 const showPoints = ($event) => {
     // console.log($event)
-    showScore.value = true
-    player.value = $event.player
-    lastCategoryClicked.value = $event.category
-    if ($event.category == 'pts') {
-        isPts.value = true
-    } else {
-        isPts.value = false
+    if (currentQuarter.value != 0) {
+        showScore.value = true
+        player.value = $event.player
+        lastCategoryClicked.value = $event.category
+        if ($event.category == 'pts') {
+            isPts.value = true
+        } else {
+            isPts.value = false
+        }
     }
 }
 
@@ -115,13 +146,13 @@ const redo = () => {
 const getNavAction = ($event) => {
     // console.log($event.name)
     showSpecific.value = $event.name
-    if (lastNav.value == 'substitution' || lastNav.value == 'timeout') {} else {
+    if (lastNav.value == 'substitution' || lastNav.value == 'timeout') { } else {
         if ($event.name == 'undo') {
             undo()
         } else if ($event.name == 'redo') {
             redo()
         }
-    } 
+    }
     lastNav.value = $event.name
 }
 </script>
@@ -139,7 +170,8 @@ const getNavAction = ($event) => {
                         </TeamShow>
                     </div>
                     <div class="col-span-6 text-center">
-                        <Timer :time="quarterTime" />
+                        <Timer :time="quarterTime" :quarter="currentQuarter" :key="timerKey"
+                            @status="displaySaveButton" />
                     </div>
                     <div class="col-span-3 grid text-center">
                         <TeamShow :team-name="players.team_two.name">
@@ -148,14 +180,14 @@ const getNavAction = ($event) => {
                     </div>
                 </div>
                 <div class="grid grid-cols-5 gap-2 mt-2">
-                    <QuarterShow :quarter-name="'QRT 1'" :is-active="false" />
-                    <QuarterShow :quarter-name="'QRT 2'" :is-active="true">
+                    <QuarterShow :quarter-name="'QRT 1'" :is-active="currentQuarter == 1 ? true:false" />
+                    <QuarterShow :quarter-name="'QRT 2'" :is-active="currentQuarter == 2 ? true:false">
                         08:30
                     </QuarterShow>
-                    <QuarterShow :quarter-name="'QRT 3'" :is-active="false">
+                    <QuarterShow :quarter-name="'QRT 3'" :is-active="currentQuarter == 3 ? true:false">
                         12:00
                     </QuarterShow>
-                    <QuarterShow :quarter-name="'QRT 4'" :is-active="false">
+                    <QuarterShow :quarter-name="'QRT 4'" :is-active="currentQuarter == 4 ? true:false">
                         12:00
                     </QuarterShow>
                     <div>
@@ -196,10 +228,14 @@ const getNavAction = ($event) => {
                     </div>
                 </box>
             </div>
-
+            <buttonSubmit v-if="showSaveButton" @click="saveData" class="mt-2">
+                <p v-if="quarter == currentQuarter">Save game</p>
+                <p v-else>Proceed to next quarter</p>
+            </buttonSubmit>
+            
         </div>
         <div class="fixed bottom-0 w-full md:max-w-lg">
-            <DSISTNavigation @nav-clicked="getNavAction" />
+            <DSISTNavigation @nav-clicked="getNavAction" :key="timerKey" />
         </div>
 
     </div>

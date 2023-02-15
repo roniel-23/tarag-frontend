@@ -6,31 +6,64 @@ import { storeToRefs } from "pinia";
 const { timeLength, isPause, start } = storeToRefs(useTimerStore());
 
 const props = defineProps({
-    time: Number
+    time: Number,
+    quarter: Number
 })
 
+const emit = defineEmits(['status'])
+
+const title = ref('')
+
+switch(props.quarter){
+    case 0:
+        title.value = 'Warm up'
+        break
+    case 1:
+        title.value = 'Quarter 1'
+        break
+    case 2:
+        title.value = 'Quarter 2'
+        break
+    case 3:
+        title.value = 'Quarter 3'
+        break
+    case 4:
+        title.value = 'Quarter 4'
+        break
+    case 5:
+        title.value = 'Overtime'
+        break
+    case 6:
+        title.value = 'Overtime'
+        break
+}
+
 timeLength.value = props.time
+const firstStart =ref(false)
 
 const time = new Date();
 time.setSeconds(time.getSeconds() + timeLength.value * 60); // 60 = 1 minutes timer
 const timer = useTimer(time, false);
-const firstStart =ref(false)
 
 onMounted(() => {
     watchEffect(async () => {
         // console.log('running: ' + timer.isRunning.value)
-        // console.log('pause: ' + isPaused.value)
-        if (timer.isExpired.value) {
-            console.log('over')
-            start.value = false
-        }
+        // console.log('pause: ' + isPause.value)
+        // console.log('start: ' + start.value)
+        // console.log('first: ' + firstStart.value)
         if(start.value == true && firstStart.value == false){
             timer.start()
             firstStart.value = true
         }else if(timer.isRunning.value == true && isPause.value == false) {
             timer.pause()
-        }else if(timer.isRunning.value == false && !isPause.value == false && start.value == true) {
+        }else if(timer.isRunning.value == false && isPause.value == true && start.value == true && !timer.isExpired.value) {
             timer.resume()
+        }
+
+        if(timer.isExpired.value) {
+            console.log('over')
+            emit('status')
+            start.value = false
         }
     })
 })
@@ -39,7 +72,7 @@ onMounted(() => {
 
 <template>
     <div class="border-b pb-1">
-        <h3 class="uppercase font-medium">warm-up timer</h3>
+        <h3 class="uppercase font-medium">{{ title }}</h3>
     </div>
     <div class="w-full p-2">
         <h3 class="text-3xl">
