@@ -14,7 +14,7 @@ import Timer from './DSISTStart-components/Timer.vue';
 import buttonSubmit from '../g-app-components/button-submit.vue';
 import { usePlayerStore } from '../stores/playerStore';
 import { storeToRefs } from "pinia";
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const { players, loading, error } = storeToRefs(usePlayerStore());
 const playerStore = usePlayerStore();
@@ -37,11 +37,17 @@ const lastTeam = ref(null)
 const lastId = ref(null)
 const lastScore = ref(null)
 const lastNav = ref(null)
-const quarterTime = ref(0.1) // mins
+const quarterTime = ref(1) // mins
 const warmUpTime = ref(0.1)
+const sendToTimer = ref(0)
 const currentQuarter = ref(0) // 0 for warm up
 const quarter = ref(4)
 const timerKey = ref(0)
+const quarterTimeDisplay_min = ref(Math.floor(quarterTime.value))
+const quarterTimeDisplay_sec = ref(quarterTime.value * 60 % 60)
+const quarterTimeDisplay = ref(String(quarterTimeDisplay_min.value).padStart(2, '0') + ':' + String(quarterTimeDisplay_sec.value).padStart(2, '0'))
+
+sendToTimer.value = warmUpTime.value
 
 const reRenderTimer = () => {
     timerKey.value += 1;
@@ -52,7 +58,7 @@ const saveData = () => {
     if (quarter.value == currentQuarter.value) {
         console.log('end game')
     } else {
-        quarterTime.value = 0.1
+        sendToTimer.value = quarterTime.value
         reRenderTimer()
     }
     currentQuarter.value++
@@ -170,8 +176,7 @@ const getNavAction = ($event) => {
                         </TeamShow>
                     </div>
                     <div class="col-span-6 text-center">
-                        <Timer :time="quarterTime" :quarter="currentQuarter" :key="timerKey"
-                            @status="displaySaveButton" />
+                        <Timer :time="sendToTimer" :quarter="currentQuarter" :key="timerKey" @status="displaySaveButton" />
                     </div>
                     <div class="col-span-3 grid text-center">
                         <TeamShow :team-name="players.team_two.name">
@@ -180,15 +185,21 @@ const getNavAction = ($event) => {
                     </div>
                 </div>
                 <div class="grid grid-cols-5 gap-2 mt-2">
-                    <QuarterShow :quarter-name="'QRT 1'" :is-active="currentQuarter == 1 ? true:false" />
-                    <QuarterShow :quarter-name="'QRT 2'" :is-active="currentQuarter == 2 ? true:false">
-                        08:30
+                    <QuarterShow :quarter-name="'QRT 1'" :is-active="currentQuarter == 1 ? true : false">
+                        <p v-if="currentQuarter <= 1">--</p>
+                        <p v-else>{{ quarterTimeDisplay }}</p>
                     </QuarterShow>
-                    <QuarterShow :quarter-name="'QRT 3'" :is-active="currentQuarter == 3 ? true:false">
-                        12:00
+                    <QuarterShow :quarter-name="'QRT 2'" :is-active="currentQuarter == 2 ? true : false">
+                        <p v-if="currentQuarter <= 2">--</p>
+                        <p v-else>{{ quarterTimeDisplay }}</p>
                     </QuarterShow>
-                    <QuarterShow :quarter-name="'QRT 4'" :is-active="currentQuarter == 4 ? true:false">
-                        12:00
+                    <QuarterShow :quarter-name="'QRT 3'" :is-active="currentQuarter == 3 ? true : false">
+                        <p v-if="currentQuarter <= 3">--</p>
+                        <p v-else>{{ quarterTimeDisplay }}</p>
+                    </QuarterShow>
+                    <QuarterShow :quarter-name="'QRT 4'" :is-active="currentQuarter == 4 ? true : false">
+                        <p v-if="currentQuarter <= 4">--</p>
+                        <p v-else>{{ quarterTimeDisplay }}</p>
                     </QuarterShow>
                     <div>
                         <button
@@ -229,10 +240,10 @@ const getNavAction = ($event) => {
                 </box>
             </div>
             <buttonSubmit v-if="showSaveButton" @click="saveData" class="mt-2">
-                <p v-if="quarter == currentQuarter">Save game</p>
-                <p v-else>Proceed to next quarter</p>
+                <p v-if="quarter == currentQuarter" class="font-medium">Save game</p>
+                <p v-else class="font-medium">Proceed to next quarter</p>
             </buttonSubmit>
-            
+
         </div>
         <div class="fixed bottom-0 w-full md:max-w-lg">
             <DSISTNavigation @nav-clicked="getNavAction" :key="timerKey" />
@@ -240,7 +251,5 @@ const getNavAction = ($event) => {
 
     </div>
     <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" :category="lastCategoryClicked" @score="scorePoints"
-        @close="showScore = false" />
-
-
+    @close="showScore = false" />
 </template>

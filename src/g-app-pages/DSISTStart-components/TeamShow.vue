@@ -16,6 +16,6 @@ const props = defineProps({
         </h3>
     </div>
     <div class="rounded-b-lg border border-neutral-300">
-        <h3 class="uppercase font-medium">{{ teamName }}</h3>
+        <h3 class="uppercase font-medium py-1.5">{{ teamName }}</h3>
     </div>
 </template>

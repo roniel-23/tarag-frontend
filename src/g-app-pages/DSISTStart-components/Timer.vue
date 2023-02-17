@@ -3,7 +3,8 @@ import { watchEffect, onMounted, ref } from "vue";
 import { useTimer } from 'vue-timer-hook';
 import { useTimerStore } from '../../stores/timerStore';
 import { storeToRefs } from "pinia";
-const { timeLength, isPause, start } = storeToRefs(useTimerStore());
+import ShotClock from "./ShotClock.vue";
+const { timeLength, isPause, start, shotClock, currentShotClock, ShotClockReset, ShotClockPause, ShotClockAutoStart } = storeToRefs(useTimerStore());
 
 const props = defineProps({
     time: Number,
@@ -13,6 +14,16 @@ const props = defineProps({
 const emit = defineEmits(['status'])
 
 const title = ref('')
+const shotClockKey = ref(0)
+const showShotClock = ref(true)
+
+const reRenderShotClock = (value, isPause) => {
+    ShotClockReset.value = false
+    ShotClockPause.value = isPause
+    shotClock.value = value
+    // console.log('pause: ' + ShotClockPause.value)
+    shotClockKey.value += 1;
+}
 
 switch(props.quarter){
     case 0:
@@ -46,6 +57,7 @@ time.setSeconds(time.getSeconds() + timeLength.value * 60); // 60 = 1 minutes ti
 const timer = useTimer(time, false);
 
 onMounted(() => {
+    reRenderShotClock(24, false)
     watchEffect(async () => {
         // console.log('running: ' + timer.isRunning.value)
         // console.log('pause: ' + isPause.value)
@@ -65,6 +77,15 @@ onMounted(() => {
             emit('status')
             start.value = false
         }
+
+        if(ShotClockReset.value == true){
+            ShotClockReset.value = false
+            reRenderShotClock(shotClock.value, ShotClockAutoStart.value)
+        }
+
+        if(timer.minutes.value == 0 && currentShotClock.value >= timer.seconds.value){
+            showShotClock.value = false
+        }
     })
 })
 
@@ -72,9 +93,9 @@ onMounted(() => {
 
 <template>
     <div class="border-b pb-1">
-        <h3 class="uppercase font-medium">{{ title }}</h3>
+        <h3 class="uppercase font-bold text-xs">{{ title }}</h3>
     </div>
-    <div class="w-full p-2">
+    <div class="w-full mb-1">
         <h3 class="text-3xl">
             <span v-if="timer.minutes.value <= 9">0{{ timer.minutes }}</span> 
             <span v-else>{{ timer.minutes }}</span>
@@ -83,4 +104,5 @@ onMounted(() => {
             <span v-else>{{ timer.seconds }}</span>
         </h3>
     </div>
+    <ShotClock v-if="start && showShotClock && quarter > 0" :key="shotClockKey"/>
 </template>
