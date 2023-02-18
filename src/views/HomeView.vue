@@ -15,6 +15,7 @@ import { RouterLink } from 'vue-router'
           <RouterLink to="/dsistmatchid" class="home-link">DSIST Match ID</RouterLink>
           <RouterLink to="/dsistform" class="home-link">DSIST Form</RouterLink>
           <RouterLink to="/dsiststart" class="home-link">DSIST Start Game</RouterLink>
+          <RouterLink to="/dsistresult" class="home-link">DSIST Result</RouterLink>
         </div>
 
       </nav>

@@ -14,13 +14,15 @@ import Timer from './DSISTStart-components/Timer.vue';
 import buttonSubmit from '../g-app-components/button-submit.vue';
 import TeamTimeout from './DSISTStart-components/TeamTimeout.vue';
 import { usePlayerStore } from '../stores/playerStore';
+import { useGameSetupStore } from '../stores/gameSetupStore';
 import { storeToRefs } from "pinia";
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router'
 
 const { players, loading, error } = storeToRefs(usePlayerStore());
+const { quarter_time, warm_up_time, team_foul } = storeToRefs(useGameSetupStore());
+const router = useRouter()
 const playerStore = usePlayerStore();
-let quarter_1 = {}
-let quarter_2 = {}
 
 playerStore.fill();
 
@@ -39,17 +41,17 @@ const lastTeam = ref(null)
 const lastId = ref(null)
 const lastScore = ref(null)
 const lastNav = ref(null)
-const quarterTime = ref(1) // mins
-const warmUpTime = ref(0.1)
+// const quarterTime = ref(1) // mins
+// const warmUpTime = ref(0.1)
 const sendToTimer = ref(0)
 const currentQuarter = ref(0) // 0 for warm up
 const quarter = ref(4)
 const timerKey = ref(0)
-const quarterTimeDisplay_min = ref(Math.floor(quarterTime.value))
-const quarterTimeDisplay_sec = ref(quarterTime.value * 60 % 60)
+const quarterTimeDisplay_min = ref(Math.floor(quarter_time.value))
+const quarterTimeDisplay_sec = ref(quarter_time.value * 60 % 60)
 const quarterTimeDisplay = ref(String(quarterTimeDisplay_min.value).padStart(2, '0') + ':' + String(quarterTimeDisplay_sec.value).padStart(2, '0'))
 
-sendToTimer.value = warmUpTime.value
+sendToTimer.value = warm_up_time.value
 
 const reRenderTimer = () => {
     timerKey.value += 1;
@@ -59,8 +61,16 @@ const saveData = () => {
     showSaveButton.value = false
     if (quarter.value == currentQuarter.value) {
         console.log('end game')
+        playerStore.players.team_one.score = scoreTeam_one.value
+        playerStore.players.team_two.score = scoreTeam_two.value
+        if(scoreTeam_one.value > scoreTeam_two.value){
+            playerStore.players.winner = playerStore.players.team_one.name
+        } else {
+            playerStore.players.winner = playerStore.players.team_two.name
+        }
+        router.push('/dsistresult')
     } else {
-        sendToTimer.value = quarterTime.value
+        sendToTimer.value = quarter_time.value
         reRenderTimer()
     }
     currentQuarter.value++

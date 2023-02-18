@@ -41,6 +41,11 @@ const router = createRouter({
       path: '/dsiststart',
       name: 'dsiststart',
       component: () => import('../g-app-pages/DSISTStart.vue')
+    },
+    {
+      path: '/dsistresult',
+      name: 'dsistresult',
+      component: () => import('../g-app-pages/DSISTResult.vue')
     }
   ]
 })
