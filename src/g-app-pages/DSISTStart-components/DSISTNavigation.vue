@@ -52,16 +52,29 @@ const shotClockOption = () => {
 
 const emitValue = (name) => {
     page.value = name
-    if (name == 'play' || name == 'undo' || name == 'redo' || name == 'shot' || name == 'reset') {
-        isHome.value = true
-    } else {
+    if (name == 'substitution') {
         isHome.value = false
         if (startSignal.value) {
             isPause.value = false
             ShotClockPause.value = true
         }
+    } else {
+        if (name == 'timeout' && startSignal.value) {
+            isPause.value = false
+            ShotClockPause.value = true
+        }
+        isHome.value = true
     }
     emit('navClicked', { name: name })
+    // if (name == 'play' || name == 'undo' || name == 'redo' || name == 'shot' || name == 'reset') {
+    //     isHome.value = true
+    // } else {
+    //     isHome.value = false
+    //     if (startSignal.value) {
+    //         isPause.value = false
+    //         ShotClockPause.value = true
+    //     }
+    // }
 }
 </script>
 
@@ -125,5 +138,5 @@ const emitValue = (name) => {
             </button>
         </div>
         <ShotClockOptionShow v-if="showShotClockOption" @close="showShotClockOption = false" />
-</div>
+    </div>
 </template>

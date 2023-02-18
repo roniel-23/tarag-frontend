@@ -12,6 +12,7 @@ import TeamSubstitution from './DSISTStart-components/TeamSubstitution.vue';
 import DSISTNavigation from './DSISTStart-components/DSISTNavigation.vue';
 import Timer from './DSISTStart-components/Timer.vue';
 import buttonSubmit from '../g-app-components/button-submit.vue';
+import TeamTimeout from './DSISTStart-components/TeamTimeout.vue';
 import { usePlayerStore } from '../stores/playerStore';
 import { storeToRefs } from "pinia";
 import { ref, onMounted } from 'vue';
@@ -30,6 +31,7 @@ const player = ref(null)
 const isPts = ref(false)
 const showSpecific = ref('')
 const showSaveButton = ref(false)
+const showTimeout = ref(false)
 const lastCategoryClicked = ref(null)
 const isUndo = ref(true)
 const isRedo = ref(true)
@@ -159,6 +161,9 @@ const getNavAction = ($event) => {
             redo()
         }
     }
+    if(showSpecific.value == 'timeout' && currentQuarter.value > 0){
+        showTimeout.value = true
+    }
     lastNav.value = $event.name
 }
 </script>
@@ -212,9 +217,6 @@ const getNavAction = ($event) => {
             <div v-if="showSpecific == 'substitution'">
                 <TeamSubstitution />
             </div>
-            <div v-else-if="showSpecific == 'timeout'">
-                timeout
-            </div>
             <div v-else v-if="players.length != 0">
                 <!-- team 1 -->
                 <box>
@@ -250,6 +252,7 @@ const getNavAction = ($event) => {
         </div>
 
     </div>
+    <TeamTimeout v-if="showTimeout" :team_one="players.team_one.name" :team_two="players.team_two.name" @close="showTimeout = false"/>
     <ScoreShow v-if="showScore" :is-pts="isPts" :player="player" :category="lastCategoryClicked" @score="scorePoints"
     @close="showScore = false" />
 </template>
